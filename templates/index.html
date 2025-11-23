@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Convenios</title>
+    <!-- Añadimos la librería de íconos Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-text: #e0e0e0;
+            --secondary-text: #a0a0a0;
+            --card-bg: #ffffff;
+            --primary-blue: #00aaff;
+            --green: #00ffaa;
+            --yellow: #ffdd00;
+            --red: #ff4466;
+        }
+
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.7; }
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            background: linear-gradient(-45deg, #121828, #1a2035, #2a3045);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            color: var(--primary-text);
+        }
+
+        .container { padding: 2em; }
+        h1 { font-size: 2.5rem; font-weight: 700; color: #fff; text-shadow: 0 0 10px rgba(0, 170, 255, 0.5); }
+        p { color: var(--secondary-text); margin-top: -15px; font-size: 1.1rem; }
+
+        .search-container { margin: 2.5em 0; display: flex; gap: 15px; }
+        .search-container input { 
+            flex-grow: 1; padding: 15px; border: 1px solid #333; border-radius: 10px; 
+            font-family: 'Poppins', sans-serif; font-size: 1rem; 
+            background-color: rgba(0, 0, 0, 0.2); color: var(--primary-text);
+            transition: all 0.3s ease;
+        }
+        .search-container input:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 15px rgba(0, 170, 255, 0.5); }
+        .search-container button, .search-container a { 
+            padding: 15px 25px; border: none; border-radius: 10px; 
+            background-color: var(--primary-blue); color: white; cursor: pointer; 
+            font-weight: 600; transition: all 0.3s ease; text-decoration: none;
+        }
+        .search-container a { background-color: #444; }
+        .search-container button:hover { background-color: #fff; color: var(--primary-blue); box-shadow: 0 0 20px var(--primary-blue); }
+        .search-container a:hover { background-color: #666; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 1rem; }
+        th { text-align: left; padding: 0 1.5rem; color: var(--secondary-text); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 1.5rem; vertical-align: middle; }
+        tbody tr { 
+            background-color: rgba(255, 255, 255, 0.05); border-radius: 12px; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        tbody tr:nth-child(odd) { animation-delay: 0.1s; }
+        tbody tr:nth-child(even) { animation-delay: 0.2s; }
+        tbody tr:hover { transform: translateY(-8px) scale(1.01); }
+        tr:has(.estado.Verde:hover) { box-shadow: 0 0 25px -5px var(--green); }
+        tr:has(.estado.Amarillo:hover) { box-shadow: 0 0 25px -5px var(--yellow); }
+        tr:has(.estado.Rojo:hover) { box-shadow: 0 0 25px -5px var(--red); }
+
+        .estado { font-weight: 600; padding: 6px 14px; border-radius: 9999px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; width: fit-content; }
+        .estado::before { content: ''; display: block; width: 10px; height: 10px; border-radius: 50%; animation: pulse 2s infinite; }
+        .estado.Verde { background-color: rgba(0, 255, 170, 0.1); color: var(--green); }
+        .estado.Verde::before { background-color: var(--green); box-shadow: 0 0 8px var(--green); }
+        .estado.Amarillo { background-color: rgba(255, 221, 0, 0.1); color: var(--yellow); }
+        .estado.Amarillo::before { background-color: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+        .estado.Rojo { background-color: rgba(255, 68, 102, 0.1); color: var(--red); }
+        .estado.Rojo::before { background-color: var(--red); box-shadow: 0 0 8px var(--red); }
+
+        .actions a { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; text-decoration: none; border-radius: 50%; cursor: pointer; margin-right: 8px; color: var(--secondary-text); transition: all 0.3s ease; }
+        .actions a:hover { transform: translateY(-3px) scale(1.1); }
+        .btn-renew:hover { background-color: rgba(0, 255, 170, 0.1); color: var(--green); box-shadow: 0 0 15px var(--green); }
+        .btn-delete:hover { background-color: rgba(255, 68, 102, 0.1); color: var(--red); box-shadow: 0 0 15px var(--red); }
+
+        .vencido { font-weight: 500; color: var(--red); text-shadow: 0 0 5px rgba(255, 68, 102, 0.7); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard de Gestión de Convenios</h1>
+        <p>Semáforo visual para el seguimiento de vencimientos.</p>
+
+        <!-- Formulario de Búsqueda -->
+        <div class="search-container">
+            <form action="/" method="get" style="display: contents;">
+                <input type="text" name="q" placeholder="Buscar por nombre o entidad..." value="{{ search_query or '' }}">
+                <button type="submit"><i class="fas fa-search"></i> Buscar</button>
+            </form>
+            <a href="/">Limpiar</a>
+        </div>
+    
+        <table>
+            <thead>
+                <tr>
+                    <th>Estado</th>
+                    <th>Convenio</th>
+                    <th>Entidad</th>
+                    <th>Fecha de Vencimiento</th>
+                    <th>Días Restantes</th>
+                    <th>Responsable</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for convenio, analisis in convenios %}
+                <tr>
+                    <td>
+                        <div class="estado {{ analisis.estado.value }}">{{ analisis.estado.value }}</div>
+                    </td>
+                    <td>{{ convenio.nombre }}</td>
+                    <td>{{ convenio.entidad }}</td>
+                    <td>{{ convenio.fecha_vencimiento.strftime('%d-%m-%Y') }}</td>
+                    <td>
+                        {% if analisis.dias_restantes < 0 %}
+                            <span class="vencido">Vencido hace {{ -analisis.dias_restantes }} días</span>
+                        {% else %}
+                            {{ analisis.dias_restantes }}
+                        {% endif %}
+                    </td>
+                    <td>{{ convenio.responsable }}</td>
+                    <td class="actions">
+                        <!-- Los botones ahora son enlaces que llaman a las nuevas rutas de Flask -->
+                        <a href="/renovar/{{ convenio.id }}" class="btn-renew" title="Renovar"><i class="fas fa-sync-alt"></i></a>
+                        <a href="/eliminar/{{ convenio.id }}" class="btn-delete" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este convenio?');"><i class="fas fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

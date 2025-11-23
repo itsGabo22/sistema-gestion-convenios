@@ -1,0 +1,4 @@
+# Ignorar la carpeta de caché de Python
+__pycache__/
+
+# Si en el futuro usas entornos virtuales, también puedes ignorarlos
