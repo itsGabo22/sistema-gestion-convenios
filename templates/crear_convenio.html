@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Nuevo Convenio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            background: linear-gradient(-45deg, #121828, #1a2035, #2a3045);
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2.5em;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(0, 170, 255, 0.2);
+        }
+        h1 { color: #fff; text-align: center; margin-bottom: 1em; }
+        .form-group { margin-bottom: 1.5em; }
+        .form-group label { display: block; margin-bottom: 0.5em; font-weight: 500; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: #e0e0e0;
+            font-family: 'Poppins', sans-serif;
+        }
+        /* CORRECCIÓN: Añadir estilo específico para las opciones del menú desplegable */
+        .form-group select option {
+            background: #2a3045;
+        }
+        .form-buttons { display: flex; gap: 1em; justify-content: flex-end; margin-top: 2em; }
+        .form-buttons button, .form-buttons a {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-save { background-color: #00aaff; color: white; }
+        .btn-cancel { background-color: #444; color: white; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Crear Nuevo Convenio</h1>
+        <form method="post">
+            <div class="form-group"><label for="nombre">Nombre del Convenio</label><input type="text" id="nombre" name="nombre" required></div>
+            <div class="form-group"><label for="entidad">Entidad</label><input type="text" id="entidad" name="entidad" required></div>
+            <div class="form-group"><label for="fecha_vencimiento">Fecha de Vencimiento</label><input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required></div>
+            <div class="form-group"><label for="responsable">Responsable</label><input type="text" id="responsable" name="responsable"></div>
+            <div class="form-group"><label for="tipo">Tipo de Convenio</label><select id="tipo" name="tipo"><option value="Academico">Académico</option><option value="Practicas">Prácticas</option><option value="Investigacion">Investigación</option><option value="Movilidad">Movilidad</option><option value="Beneficio">Beneficio</option></select></div>
+            <div class="form-buttons">
+                <a href="/" class="btn-cancel">Cancelar</a>
+                <button type="submit" class="btn-save">Guardar Convenio</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+```

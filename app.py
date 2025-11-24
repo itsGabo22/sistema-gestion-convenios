@@ -1,7 +1,7 @@
 # app.py
 
 from flask import Flask, render_template, redirect, url_for, request, Response
-from modelos import analizar_convenio_ia, cargar_convenios_desde_db, cargar_evaluaciones_desde_db, EstadoConvenio, Convenio, get_db_connection
+from modelos import analizar_convenio_ia, cargar_convenios_desde_db, cargar_evaluaciones_desde_google_sheets, EstadoConvenio, Convenio, get_db_connection
 from datetime import date, datetime
 from fpdf import FPDF
 from openpyxl.utils import get_column_letter
@@ -52,7 +52,8 @@ def dashboard_convenios():
     convenios = cargar_convenios_desde_db()
 
     # Cargar las evaluaciones
-    evaluaciones = cargar_evaluaciones_desde_db()
+    # ¡IMPORTANTE! Reemplaza "Nombre de tu Hoja de Cálculo" con el nombre exacto de tu archivo en Google Drive.
+    evaluaciones = cargar_evaluaciones_desde_google_sheets("Calificación de práctica por convenio")
     
     # 3. Calcular KPIs y Notificaciones (sobre la lista completa)
     kpis = {
@@ -131,6 +132,32 @@ def renovar_convenio(convenio_id):
         conn.commit()
     conn.close()
     return redirect(url_for('dashboard_convenios'))
+
+@app.route('/crear', methods=['GET', 'POST'])
+def crear_convenio():
+    """
+    Muestra un formulario para crear un nuevo convenio y lo guarda en la base de datos.
+    """
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        nombre = request.form['nombre']
+        entidad = request.form['entidad']
+        fecha_vencimiento = request.form['fecha_vencimiento']
+        responsable = request.form['responsable']
+        tipo = request.form['tipo']
+
+        # Insertar en la base de datos
+        conn = get_db_connection()
+        conn.execute('''
+            INSERT INTO convenios (nombre, entidad, fecha_vencimiento, responsable, tipo, renovaciones)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (nombre, entidad, fecha_vencimiento, responsable, tipo, 0)) # Se asume 0 renovaciones al crear
+        conn.commit()
+        conn.close()
+        
+        return redirect(url_for('dashboard_convenios'))
+
+    return render_template('crear_convenio.html')
 
 @app.route('/export/pdf')
 def export_pdf():

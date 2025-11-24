@@ -87,10 +87,12 @@
         .search-container a.btn-clear { background-color: #444; }
         .search-container a.btn-export-pdf { background-color: var(--red); }
         .search-container a.btn-export-excel { background-color: var(--green); }
+        .search-container a.btn-create { background-color: var(--primary-blue); }
         .search-container button:hover { background-color: #fff; color: var(--primary-blue); box-shadow: 0 0 20px var(--primary-blue); }
         .search-container a.btn-clear:hover { background-color: #666; }
         .search-container a.btn-export-pdf:hover { background-color: #fff; color: var(--red); box-shadow: 0 0 20px var(--red); }
         .search-container a.btn-export-excel:hover { background-color: #fff; color: var(--green); box-shadow: 0 0 20px var(--green); }
+        .search-container a.btn-create:hover { background-color: #fff; color: var(--primary-blue); box-shadow: 0 0 20px var(--primary-blue); }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0 1rem; }
         th { text-align: left; padding: 0 1.5rem; color: var(--secondary-text); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
@@ -204,6 +206,12 @@
             color: var(--primary-blue);
             cursor: pointer;
         }
+        .copy-link-icon {
+            margin-left: 5px;
+            color: var(--kpi-green);
+            cursor: pointer;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -256,6 +264,7 @@
                 <button type="submit"><i class="fas fa-search"></i> Buscar</button>
             </form>
             <a href="/" class="btn-clear">Limpiar</a>
+            <a href="/crear" class="btn-create"><i class="fas fa-plus"></i> Crear Convenio</a>
             <a href="/export/pdf" class="btn-export-pdf" target="_blank"><i class="fas fa-file-pdf"></i> PDF</a>
             <a href="/export/excel" class="btn-export-excel" target="_blank"><i class="fas fa-file-excel"></i> Excel</a>
         </div>
@@ -312,9 +321,10 @@
                     </td>
                     <td>
                         {{ convenio.nombre }}
-                        <!-- CORRECCIÓN: Mostrar el ícono SOLO si el tipo es 'Practicas' Y existen evaluaciones -->
-                        {% if convenio.tipo == 'Practicas' and convenio.id in evaluaciones %}
-                            <i class="fas fa-user-graduate evaluation-icon" onclick="openModal('modal-{{ convenio.id }}')"></i>
+                        <!-- MEJORA: Mostrar siempre los íconos para convenios de tipo 'Practicas' -->
+                        {% if convenio.tipo == 'Practicas' %}
+                            <i class="fas fa-user-graduate evaluation-icon" onclick="openModal('modal-{{ convenio.id }}')" title="Ver evaluación"></i>
+                            <i class="fas fa-link copy-link-icon" onclick="copyEvaluationLink('{{ convenio.id }}', '{{ convenio.responsable }}')" title="Copiar enlace de evaluación para el responsable"></i>
                         {% endif %}
                     </td>
                     <td>{{ convenio.entidad }}</td>
@@ -341,24 +351,30 @@
         </table>
 
         <!-- Ventanas Modales (una por convenio con evaluaciones) -->
-        {% for convenio_id, evals in evaluaciones.items() %}
-        <div id="modal-{{ convenio_id }}" class="modal">
+        {% for convenio, analisis in convenios %}
+            {% if convenio.tipo == 'Practicas' %}
+        <div id="modal-{{ convenio.id }}" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Evaluaciones del Convenio</h2>
-                    <span class="close-button" onclick="closeModal('modal-{{ convenio_id }}')">&times;</span>
+                    <h2>Evaluación: {{ convenio.nombre }}</h2>
+                    <span class="close-button" onclick="closeModal('modal-{{ convenio.id }}')">&times;</span>
                 </div>
                 <div class="modal-body">
-                    {% for eval in evals %}
-                    <div class="evaluation-item">
-                        <p><strong>Estudiante:</strong> {{ eval.nombre_estudiante }}</p>
-                        <p><strong>Calificación:</strong> {{ eval.calificacion }} / 5</p>
-                        <p><strong>Comentarios:</strong> "{{ eval.comentarios }}"</p>
-                    </div>
-                    {% endfor %}
+                    {% if convenio.id in evaluaciones %}
+                        {% for eval in evaluaciones[convenio.id] %}
+                        <div class="evaluation-item">
+                            <p><strong>Estudiante:</strong> {{ eval.nombre_estudiante }}</p>
+                            <p><strong>Calificación:</strong> {{ eval.calificacion }} / 5</p>
+                            <p><strong>Comentarios:</strong> "{{ eval.comentarios }}"</p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>Este convenio aún no tiene evaluaciones registradas.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
+            {% endif %}
         {% endfor %}
     </div>
 
@@ -376,6 +392,23 @@
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = "none";
             }
+        }
+
+        function copyEvaluationLink(convenioId, responsibleName) {
+            // --- ¡IMPORTANTE! Reemplaza estas variables con las de tu formulario ---
+            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeZ6suB9l69Jp8m72Z8haEMpluSi3cDqrQQNKI7qHbEERBFnQ/viewform"; // Ejemplo: "https://docs.google.com/forms/d/e/1FAIpQLSc.../viewform"
+            const studentNameEntry = "entry.301272732"; // Ejemplo: "entry.123456789"
+            const convenioIdEntry = "entry.498925409"; // Ejemplo: "entry.987654321"
+            // --------------------------------------------------------------------
+
+            const studentNameFormatted = responsibleName.replace(/ /g, "+"); // Usamos el nombre del responsable como placeholder
+            const finalUrl = `${formUrl}?usp=pp_url&${studentNameEntry}=${studentNameFormatted}&${convenioIdEntry}=${convenioId}`;
+
+            navigator.clipboard.writeText(finalUrl).then(function() {
+                alert("¡Enlace de evaluación copiado al portapapeles!");
+            }, function(err) {
+                alert("Error al copiar el enlace: " + err);
+            });
         }
     </script>
 </body>

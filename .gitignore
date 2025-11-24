@@ -7,5 +7,5 @@ database.db
 
 # ¡MUY IMPORTANTE! Ignorar el archivo de credenciales de Google
 credentials.json
-
-# Si en el futuro usas entornos virtuales, también puedes ignorarlos
+#Datos que no se deben visualizar
+/datos_iniciales

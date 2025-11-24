@@ -127,23 +127,33 @@ def cargar_convenios_desde_db() -> list[Convenio]:
         lista_convenios.append(convenio)
     return lista_convenios
 
-def cargar_evaluaciones_desde_db() -> dict[int, list[EvaluacionPractica]]:
+def cargar_evaluaciones_desde_google_sheets(nombre_spreadsheet: str) -> dict[int, list[EvaluacionPractica]]:
     """
-    Carga todas las evaluaciones desde la base de datos SQLite.
+    Lee una hoja de Google Sheets y carga las evaluaciones en un diccionario.
     """
-    conn = get_db_connection()
-    evaluaciones_db = conn.execute('SELECT * FROM evaluaciones').fetchall()
-    conn.close()
-
     evaluaciones = {}
-    for row in evaluaciones_db:
-        evaluacion = EvaluacionPractica(
-            id_convenio=row['id_convenio'],
-            nombre_estudiante=row['nombre_estudiante'],
-            calificacion=row['calificacion'],
-            comentarios=row['comentarios']
-        )
-        if evaluacion.id_convenio not in evaluaciones:
-            evaluaciones[evaluacion.id_convenio] = []
-        evaluaciones[evaluacion.id_convenio].append(evaluacion)
+    try:
+        import gspread
+        from oauth2client.service_account import ServiceAccountCredentials
+
+        scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
+                 "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+        
+        creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+        client = gspread.authorize(creds)
+        sheet = client.open(nombre_spreadsheet).sheet1
+        
+        records = sheet.get_all_records()
+        for record in records:
+            evaluacion = EvaluacionPractica(
+                id_convenio=int(record['id_convenio']),
+                nombre_estudiante=record['nombre_estudiante'],
+                calificacion=int(record['calificacion']),
+                comentarios=record['comentarios']
+            )
+            if evaluacion.id_convenio not in evaluaciones:
+                evaluaciones[evaluacion.id_convenio] = []
+            evaluaciones[evaluacion.id_convenio].append(evaluacion)
+    except Exception as e:
+        print(f"Error al cargar desde Google Sheets: {e}")
     return evaluaciones
