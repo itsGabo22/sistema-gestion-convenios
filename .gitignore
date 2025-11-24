@@ -1,4 +1,11 @@
+```
 # Ignorar la carpeta de caché de Python
 __pycache__/
+
+# Ignorar el archivo de la base de datos SQLite
+database.db
+
+# ¡MUY IMPORTANTE! Ignorar el archivo de credenciales de Google
+credentials.json
 
 # Si en el futuro usas entornos virtuales, también puedes ignorarlos

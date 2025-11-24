@@ -36,6 +36,11 @@
         }
 
         body { 
+            --kpi-green: rgba(0, 255, 170, 0.8);
+            --kpi-yellow: rgba(255, 221, 0, 0.8);
+            --kpi-red: rgba(255, 68, 102, 0.8);
+            --kpi-total: rgba(0, 170, 255, 0.8);
+
             font-family: 'Poppins', sans-serif; 
             margin: 0; 
             background: linear-gradient(-45deg, #121828, #1a2035, #2a3045);
@@ -48,25 +53,52 @@
         h1 { font-size: 2.5rem; font-weight: 700; color: #fff; text-shadow: 0 0 10px rgba(0, 170, 255, 0.5); }
         p { color: var(--secondary-text); margin-top: -15px; font-size: 1.1rem; }
 
+        .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .kpi-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 1.5rem; border-radius: 12px; }
+        .kpi-card .value { font-size: 2.5rem; font-weight: 700; }
+        .kpi-card .label { font-size: 1rem; color: var(--secondary-text); }
+        .kpi-card.vigentes .value { color: var(--kpi-green); }
+        .kpi-card.por-vencer .value { color: var(--kpi-yellow); }
+        .kpi-card.vencidos .value { color: var(--kpi-red); }
+        .kpi-card.total .value { color: var(--kpi-total); }
+
+        .notifications { background: rgba(255, 221, 0, 0.1); border: 1px solid var(--yellow); border-radius: 12px; padding: 1rem; margin: 2rem 0; }
+        .notifications h3 { margin: 0 0 10px 0; color: var(--yellow); }
+        .notifications ul { margin: 0; padding-left: 20px; }
+        .notifications li { color: var(--secondary-text); }
+
         .search-container { margin: 2.5em 0; display: flex; gap: 15px; }
         .search-container input { 
             flex-grow: 1; padding: 15px; border: 1px solid #333; border-radius: 10px; 
             font-family: 'Poppins', sans-serif; font-size: 1rem; 
             background-color: rgba(0, 0, 0, 0.2); color: var(--primary-text);
             transition: all 0.3s ease;
+            -webkit-appearance: none; /* Ocultar flecha por defecto en Safari */
+            -moz-appearance: none; /* Ocultar flecha por defecto en Firefox */
+            appearance: none; /* Ocultar flecha por defecto en navegadores modernos */
         }
-        .search-container input:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 15px rgba(0, 170, 255, 0.5); }
+        .search-container select { flex-grow: 0.5; }
+        .search-container input:focus, .search-container select:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 15px rgba(0, 170, 255, 0.5); }
         .search-container button, .search-container a { 
             padding: 15px 25px; border: none; border-radius: 10px; 
             background-color: var(--primary-blue); color: white; cursor: pointer; 
             font-weight: 600; transition: all 0.3s ease; text-decoration: none;
         }
-        .search-container a { background-color: #444; }
+        .search-container a.btn-clear { background-color: #444; }
+        .search-container a.btn-export-pdf { background-color: var(--red); }
+        .search-container a.btn-export-excel { background-color: var(--green); }
         .search-container button:hover { background-color: #fff; color: var(--primary-blue); box-shadow: 0 0 20px var(--primary-blue); }
-        .search-container a:hover { background-color: #666; }
+        .search-container a.btn-clear:hover { background-color: #666; }
+        .search-container a.btn-export-pdf:hover { background-color: #fff; color: var(--red); box-shadow: 0 0 20px var(--red); }
+        .search-container a.btn-export-excel:hover { background-color: #fff; color: var(--green); box-shadow: 0 0 20px var(--green); }
 
         table { width: 100%; border-collapse: separate; border-spacing: 0 1rem; }
         th { text-align: left; padding: 0 1.5rem; color: var(--secondary-text); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        th a { color: var(--secondary-text); text-decoration: none; transition: color 0.2s; }
+        th a:hover { color: var(--primary-text); }
+        th .sort-icon { margin-left: 8px; opacity: 0.5; }
+        th.active .sort-icon { opacity: 1; color: var(--primary-blue); }
+
         td { padding: 1.5rem; vertical-align: middle; }
         tbody tr { 
             background-color: rgba(255, 255, 255, 0.05); border-radius: 12px; 
@@ -97,6 +129,81 @@
         .btn-delete:hover { background-color: rgba(255, 68, 102, 0.1); color: var(--red); box-shadow: 0 0 15px var(--red); }
 
         .vencido { font-weight: 500; color: var(--red); text-shadow: 0 0 5px rgba(255, 68, 102, 0.7); }
+        .criticidad-score { font-weight: 600; font-size: 1.1rem; text-align: center; }
+
+        /* Estilos para el Tooltip de Ayuda */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 8px;
+            color: var(--secondary-text);
+        }
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 280px;
+            background-color: #2a3045;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: normal;
+            line-height: 1.6;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltip .tooltip-text strong {
+            color: var(--yellow);
+        }
+
+        /* Estilos para la Ventana Modal */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            animation: fadeIn 0.3s;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #1a2035, #2a3045);
+            margin: 10% auto;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            width: 60%;
+            max-width: 700px;
+            box-shadow: 0 0 30px rgba(0, 170, 255, 0.3);
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.2); padding-bottom: 15px; }
+        .modal-header h2 { margin: 0; color: var(--primary-blue); }
+        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-button:hover { color: white; }
+        .evaluation-item { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 15px 0; }
+        .evaluation-item:last-child { border-bottom: none; }
+        .evaluation-item strong { color: var(--yellow); }
+
+        .evaluation-icon {
+            margin-left: 10px;
+            color: var(--primary-blue);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -104,22 +211,94 @@
         <h1>Dashboard de Gestión de Convenios</h1>
         <p>Semáforo visual para el seguimiento de vencimientos.</p>
 
+        <!-- Contenedor de KPIs -->
+        <div class="kpi-container">
+            <div class="kpi-card vigentes">
+                <div class="value">{{ kpis.vigentes }}</div>
+                <div class="label">🟢 Convenios Vigentes</div>
+            </div>
+            <div class="kpi-card por-vencer">
+                <div class="value">{{ kpis.por_vencer }}</div>
+                <div class="label">🟡 Por Vencer</div>
+            </div>
+            <div class="kpi-card vencidos">
+                <div class="value">{{ kpis.vencidos }}</div>
+                <div class="label">🔴 Vencidos</div>
+            </div>
+            <div class="kpi-card total">
+                <div class="value">{{ kpis.total }}</div>
+                <div class="label">📄 Total Convenios</div>
+            </div>
+        </div>
+
+        <!-- Banner de Notificaciones -->
+        {% if notificaciones %}
+        <div class="notifications">
+            <h3>🔔 Alertas Importantes</h3>
+            <ul>
+                {% for notif in notificaciones %}
+                <li>{{ notif }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
         <!-- Formulario de Búsqueda -->
         <div class="search-container">
             <form action="/" method="get" style="display: contents;">
                 <input type="text" name="q" placeholder="Buscar por nombre o entidad..." value="{{ search_query or '' }}">
+                <select name="status">
+                    <option value="">Todos los Estados</option>
+                    <option value="Verde" {% if status_filter == 'Verde' %}selected{% endif %}>Verde</option>
+                    <option value="Amarillo" {% if status_filter == 'Amarillo' %}selected{% endif %}>Amarillo</option>
+                    <option value="Rojo" {% if status_filter == 'Rojo' %}selected{% endif %}>Rojo</option>
+                </select>
                 <button type="submit"><i class="fas fa-search"></i> Buscar</button>
             </form>
-            <a href="/">Limpiar</a>
+            <a href="/" class="btn-clear">Limpiar</a>
+            <a href="/export/pdf" class="btn-export-pdf" target="_blank"><i class="fas fa-file-pdf"></i> PDF</a>
+            <a href="/export/excel" class="btn-export-excel" target="_blank"><i class="fas fa-file-excel"></i> Excel</a>
         </div>
     
         <table>
             <thead>
                 <tr>
-                    <th>Estado</th>
-                    <th>Convenio</th>
+                    <th class="{{ 'active' if sort_by == 'estado' else '' }}">
+                        <a href="{{ url_for('dashboard_convenios', q=search_query, status=status_filter, sort_by='estado', order='desc' if sort_by == 'estado' and order == 'asc' else 'asc') }}">
+                            Estado <i class="fas {{ 'fa-sort-up' if sort_by == 'estado' and order == 'asc' else 'fa-sort-down' if sort_by == 'estado' and order == 'desc' else 'fa-sort' }} sort-icon"></i>
+                        </a>
+                    </th>
+                    <th>
+                        Convenio
+                        <span class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Haz clic en el ícono <i class="fas fa-user-graduate"></i> para ver las evaluaciones de los estudiantes en práctica.</span>
+                        </span>
+                    </th>
                     <th>Entidad</th>
-                    <th>Fecha de Vencimiento</th>
+                    <th class="{{ 'active' if sort_by == 'fecha' else '' }}">
+                        <a href="{{ url_for('dashboard_convenios', q=search_query, status=status_filter, sort_by='fecha', order='desc' if sort_by == 'fecha' and order == 'asc' else 'asc') }}">
+                            Vencimiento <i class="fas {{ 'fa-sort-up' if sort_by == 'fecha' and order == 'asc' else 'fa-sort-down' if sort_by == 'fecha' and order == 'desc' else 'fa-sort' }} sort-icon"></i>
+                        </a>
+                    </th>
+                    <th class="{{ 'active' if sort_by == 'criticidad' else '' }}">
+                        <!-- CORRECCIÓN: Unir el texto y el ícono en un solo enlace y arreglar la lógica de 'order' -->
+                        <a href="{{ url_for('dashboard_convenios', q=search_query, status=status_filter, sort_by='criticidad', order='desc' if sort_by == 'criticidad' and order == 'asc' else 'asc') }}">
+                            Criticidad (IA) <span class="tooltip">
+                            <i class="fas fa-circle-question"></i>
+                            <span class="tooltip-text">
+                                El Índice de Criticidad es calculado por la IA y combina:
+                                <br>- Proximidad del vencimiento
+                                <br>- Tipo de convenio (Prácticas, etc.)
+                                <br>- Historial de renovaciones
+                                <br><br><strong>Escala de Criticidad:</strong>
+                                <br><strong>0-25:</strong> Riesgo Bajo (Verde)
+                                <br><strong>26-50:</strong> Riesgo Medio (Amarillo)
+                                <br><strong>&gt;50:</strong> Riesgo Alto (Rojo)
+                            </span>
+                        </span>
+                        <i class="fas {{ 'fa-sort-up' if sort_by == 'criticidad' and order == 'asc' else 'fa-sort-down' if sort_by == 'criticidad' and order == 'desc' else 'fa-sort' }} sort-icon"></i></a>
+                    </th>
                     <th>Días Restantes</th>
                     <th>Responsable</th>
                     <th>Acciones</th>
@@ -131,9 +310,18 @@
                     <td>
                         <div class="estado {{ analisis.estado.value }}">{{ analisis.estado.value }}</div>
                     </td>
-                    <td>{{ convenio.nombre }}</td>
+                    <td>
+                        {{ convenio.nombre }}
+                        <!-- CORRECCIÓN: Mostrar el ícono SOLO si el tipo es 'Practicas' Y existen evaluaciones -->
+                        {% if convenio.tipo == 'Practicas' and convenio.id in evaluaciones %}
+                            <i class="fas fa-user-graduate evaluation-icon" onclick="openModal('modal-{{ convenio.id }}')"></i>
+                        {% endif %}
+                    </td>
                     <td>{{ convenio.entidad }}</td>
                     <td>{{ convenio.fecha_vencimiento.strftime('%d-%m-%Y') }}</td>
+                    <td>
+                        <div class="criticidad-score" title="Puntuación de Criticidad calculada por la IA">{{ analisis.criticidad }}</div>
+                    </td>
                     <td>
                         {% if analisis.dias_restantes < 0 %}
                             <span class="vencido">Vencido hace {{ -analisis.dias_restantes }} días</span>
@@ -151,6 +339,44 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <!-- Ventanas Modales (una por convenio con evaluaciones) -->
+        {% for convenio_id, evals in evaluaciones.items() %}
+        <div id="modal-{{ convenio_id }}" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Evaluaciones del Convenio</h2>
+                    <span class="close-button" onclick="closeModal('modal-{{ convenio_id }}')">&times;</span>
+                </div>
+                <div class="modal-body">
+                    {% for eval in evals %}
+                    <div class="evaluation-item">
+                        <p><strong>Estudiante:</strong> {{ eval.nombre_estudiante }}</p>
+                        <p><strong>Calificación:</strong> {{ eval.calificacion }} / 5</p>
+                        <p><strong>Comentarios:</strong> "{{ eval.comentarios }}"</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        // Cerrar el modal si el usuario hace clic fuera de él
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>

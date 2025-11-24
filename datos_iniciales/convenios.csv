@@ -1,0 +1,16 @@
+id,nombre,entidad,fecha_vencimiento,responsable,tipo,renovaciones,horas_practica,evaluacion_empresa,beneficios
+1,Convenio Marco de Cooperación,Empresa A S.A.S.,2026-08-20,Cristian Velasco,Academico,3,,,
+2,Convenio de Prácticas Profesionales,Empresa B Ltda.,2026-03-15,Gabriel Paz,Practicas,5,320,,
+3,Beneficio Corporativo Gimnasio,SmartFit Colombia,2026-01-10,Carlos Burbano,Beneficio,1,,,Descuento del 20% en membresía
+4,Convenio de Investigación,ONG Tech Futuro,2026-11-15,Danilo Lara,Investigacion,0,,,
+5,Alianza Académica Coursera,Coursera Inc.,2026-02-20,Sofia Martin,Academico,2,,,Acceso a 100 cursos gratis
+6,Convenio de Movilidad Estudiantil,Universidad de Salamanca,2027-09-01,Sebastian Mayorga,Movilidad,4,,,Intercambio semestral
+7,Soporte Técnico Anual,PC Soluciones,2025-10-01,Mario Casas,Beneficio,4,,"Soporte técnico para laboratorios"
+8,Convenio de Prácticas - Alkosto,Alkosto Pasto,2026-03-01,Luisa Fernanda,Practicas,1,320,,
+9,Convenio de Pasantías - Tigo,Tigo Colombia,2026-07-30,Andrés Mora,Practicas,0,480,,
+10,Convenio de Prácticas - Cedenar,Cedenar S.A. E.S.P.,2025-12-15,Patricia Rojas,Practicas,3,320,,
+11,"Convenio de Descuentos para Empleados","Alkosto Pasto",2026-10-20,"Diego Solarte",Beneficio,2,,"10% de descuento en tecnología"
+12,"Proyecto de Innovación 5G","Tigo Colombia",2026-02-01,"Andrés Mora",Investigacion,1,,"Desarrollo conjunto"
+13,"Prácticas en Desarrollo de Software","Nariño Software",2027-02-10,"Isabel Coral",Practicas,0,480,,""
+14,"Consultoría Estratégica","Empresa B Ltda.",2026-06-05,"Juan Pérez",Academico,2,,""
+15,"Acuerdo de Doble Titulación","Universidad de Buenos Aires",2028-06-30,"David López",Movilidad,0,,""
